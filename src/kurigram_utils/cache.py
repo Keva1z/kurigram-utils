@@ -1,11 +1,11 @@
 from pyrogram import Client
 
-from .types import CacheChat
+from .types.cache import CacheChat
 
 _CACHE: None | CacheChat = None
 
 
-def setup_cache(client: Client, chat_id: int) -> None:
+def setup_file_cache(client: Client, chat_id: int) -> None:
     """
     Sets up a cache chat for the given client and chat ID.
 
