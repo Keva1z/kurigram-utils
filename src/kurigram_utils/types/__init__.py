@@ -1,3 +1,3 @@
-from .file import File, Photo, Video
+from .file import File, Files, Photo, Video
 
-__all__ = ["File", "Photo", "Video"]
+__all__ = ["File", "Files", "Photo", "Video"]
