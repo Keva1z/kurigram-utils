@@ -19,15 +19,7 @@ class File:
         return bool(cache and cache.client.is_connected)
 
     @property
-    async def data(self) -> str | PathLike[str]:
-        if self._cache:
-            return self._cache
-
-        if not self.__check_connection():
-            return self.path
-
-        await self._create_cache()
-
+    def data(self) -> str | PathLike[str]:
         return self._cache or self.path
 
     async def _send(
@@ -40,7 +32,7 @@ class File:
 
     async def _create_cache(self) -> None:
         cache = get_cache()
-        if not cache:
+        if not cache or not self.__check_connection():
             return
 
         message = await self._send(cache.chat_id, cache.client)
