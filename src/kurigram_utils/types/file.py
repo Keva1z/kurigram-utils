@@ -2,7 +2,7 @@ import logging
 from os import PathLike
 
 from pyrogram import Client
-from pyrogram.types import Message
+from pyrogram.types import InputMediaPhoto, InputMediaVideo, Message
 
 from kurigram_utils.cache import get_cache
 
@@ -19,8 +19,12 @@ class File:
         return bool(cache and cache.client.is_connected)
 
     @property
-    def data(self) -> str | PathLike[str]:
+    def single(self) -> str | PathLike[str]:
         return self._cache or self.path
+
+    @property
+    def group(self) -> InputMediaPhoto | InputMediaVideo:
+        raise NotImplementedError("Subclasses must implement the 'group' property.")
 
     async def _send(
         self,
@@ -57,6 +61,10 @@ class Photo(File):
     def __init__(self, path: str | PathLike[str]):
         super().__init__(path)
 
+    @property
+    def group(self) -> InputMediaPhoto:
+        return InputMediaPhoto(self.single)
+
     async def _send(self, chat_id: int, client: Client) -> Message | None:
         message: Message | None = await client.send_photo(chat_id, self.path)
 
@@ -70,6 +78,10 @@ class Photo(File):
 class Video(File):
     def __init__(self, path: str | PathLike[str]):
         super().__init__(path)
+
+    @property
+    def group(self) -> InputMediaVideo:
+        return InputMediaVideo(self.single)
 
     async def _send(self, chat_id: int, client: Client) -> Message | None:
         message: Message | None = await client.send_video(chat_id, self.path)
