@@ -4,7 +4,7 @@ from os import PathLike
 from pyrogram import Client
 from pyrogram.types import Message
 
-from kurigram_utils.cache import _CACHE
+from kurigram_utils.cache import get_cache
 
 log = logging.getLogger(__name__)
 
@@ -15,7 +15,8 @@ class File:
         self._cache: str | None = None
 
     def __check_connection(self) -> bool:
-        return bool(_CACHE and _CACHE.client.is_connected)
+        cache = get_cache()
+        return bool(cache and cache.client.is_connected)
 
     @property
     async def data(self) -> str | PathLike[str]:
@@ -38,16 +39,17 @@ class File:
         raise NotImplementedError
 
     async def _create_cache(self) -> None:
-        if not _CACHE:
+        cache = get_cache()
+        if not cache:
             return
 
-        message = await self._send(_CACHE.chat_id, _CACHE.client)
+        message = await self._send(cache.chat_id, cache.client)
 
         if message:
             await message.delete()
 
             log.info(
-                f"Cached file {self.path} in chat {_CACHE.chat_id} with file_id {self._cache}."
+                f"Cached file {self.path} in chat {cache.chat_id} with file_id {self._cache}."
             )
 
 

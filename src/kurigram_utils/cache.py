@@ -1,8 +1,23 @@
 from pyrogram import Client
 
-from .types.cache import CacheChat
+
+class CacheChat:
+    def __init__(self, chat_id: int, client: Client):
+        self.chat_id: int = chat_id
+        self.client: Client = client
+
 
 _CACHE: None | CacheChat = None
+
+
+def get_cache() -> None | CacheChat:
+    """
+    Returns the current cache chat if it exists, otherwise returns None.
+
+    Returns:
+        None | CacheChat: The current cache chat or None if not set.
+    """
+    return _CACHE
 
 
 def setup_file_cache(client: Client, chat_id: int) -> None:
