@@ -53,6 +53,14 @@ class File:
             )
 
 
+class Files:
+    @classmethod
+    async def prepare(cls):
+        for value in vars(cls).values():
+            if isinstance(value, File):
+                await value._create_cache()
+
+
 class Photo(File):
     def __init__(self, path: str | PathLike[str]):
         super().__init__(path)
